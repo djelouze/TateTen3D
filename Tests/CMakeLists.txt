@@ -1,0 +1,2 @@
+ADD_EXECUTABLE( testImageFringeSource testImageFringeSource.cxx )
+TARGET_LINK_LIBRARIES( testImageFringeSource TateTen3DAlgo vtkRendering )
