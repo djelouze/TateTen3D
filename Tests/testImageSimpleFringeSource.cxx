@@ -1,41 +1,45 @@
 #include <vtkImageSimpleFringeSource.h>
 
 #include <vtkSmartPointer.h>
-#include <vtkImageViewer.h>
-#include <vtkRenderWindowInteractor.h>
+#include <vtkImageShiftScale.h>
+#include <vtkBMPWriter.h>
 
 #include <cstdlib>
 using namespace std;
 
 int main(int argc, char* argv[] )
 {
-
+   
    int xRes = 256;
    int yRes = 256;
    double phase = 0;
    int dir = 0; // vertical
 
-   if( argc == 2)
+   if( argc < 2 )
+      exit( 0 );
+
+   if( argc == 3)
    {
-      xRes = atoi( argv[1] );
-      yRes = atoi( argv[1] );
-   }
-   else if( argc > 2 )
-   {
-      xRes = atoi( argv[1] );
+      xRes = atoi( argv[2] );
       yRes = atoi( argv[2] );
+   }
+   else if( argc > 3 )
+   {
+      xRes = atoi( argv[2] );
+      yRes = atoi( argv[3] );
      
-      if( argc > 3 )
-      {
-         phase = atof( argv[3] );
-      }
       if( argc > 4 )
       {
-         dir = atoi( argv[4] );
+         phase = atof( argv[4] );
+      }
+      if( argc > 5 )
+      {
+         dir = atoi( argv[5] );
       }
    }         
 
    cout << "Using parameters: " <<endl;
+   cout << "\t Output file name: " << argv[1] << endl;
    cout << "\t xRes: " << xRes << endl;
    cout << "\t yRes: " << yRes << endl;
    cout << "\t phase: " << phase << endl;
@@ -49,12 +53,16 @@ int main(int argc, char* argv[] )
    else
       source->SetHorizontal( );
    source->SetPhase( phase );
+   source->SetAmplitude( 127 );
    source->Update( );
 
-   vtkSmartPointer<vtkImageViewer> viewer = vtkSmartPointer<vtkImageViewer>::New( );
-   viewer->SetInputConnection( source->GetOutputPort( ) );
-
-   vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::New( );
-   viewer->SetupInteractor( iren );
-   iren->Start( );
+   vtkSmartPointer<vtkImageShiftScale> shift = vtkSmartPointer<vtkImageShiftScale>::New( );
+   shift->SetInputConnection( source->GetOutputPort( ) );
+   shift->SetShift( 127 );
+   shift->SetOutputScalarTypeToUnsignedChar( );
+   
+   vtkSmartPointer<vtkBMPWriter> writer = vtkSmartPointer<vtkBMPWriter>::New( );
+   writer->SetInputConnection( shift->GetOutputPort( ) );
+   writer->SetFileName( argv[1] );
+   writer->Write( );
 }
