@@ -1,4 +1,4 @@
-#include <vtkImageFringeSource.h>
+#include <vtkImageSimpleFringeSource.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkImageViewer.h>
@@ -41,7 +41,7 @@ int main(int argc, char* argv[] )
    cout << "\t phase: " << phase << endl;
    cout << "\t direction: " << (dir==0?"Vertical":"Horizontal") << endl;
 
-   vtkSmartPointer<vtkImageFringeSource> source = vtkSmartPointer<vtkImageFringeSource>::New( );
+   vtkSmartPointer<vtkImageSimpleFringeSource> source = vtkSmartPointer<vtkImageSimpleFringeSource>::New( );
 
    source->SetResolution( xRes, yRes );
    if( !dir )

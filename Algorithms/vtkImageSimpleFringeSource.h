@@ -4,11 +4,11 @@
 
 #include <vtkImageSinusoidSource.h>
 
-class VTK_IMAGING_EXPORT vtkImageFringeSource : public vtkImageSinusoidSource
+class VTK_IMAGING_EXPORT vtkImageSimpleFringeSource : public vtkImageSinusoidSource
 {
 public:
-  static vtkImageFringeSource *New();
-  vtkTypeRevisionMacro(vtkImageFringeSource,vtkImageSinusoidSource);
+  static vtkImageSimpleFringeSource *New();
+  vtkTypeRevisionMacro(vtkImageSimpleFringeSource,vtkImageSinusoidSource);
 
   void SetResolution(int xRes, int yRes );
   void SetHorizontal( );
@@ -16,8 +16,8 @@ public:
   void SetPixelSize( double pixSize );
 
 protected:
-  vtkImageFringeSource();
-  ~vtkImageFringeSource() {};
+  vtkImageSimpleFringeSource();
+  ~vtkImageSimpleFringeSource() {};
 
 };
 
