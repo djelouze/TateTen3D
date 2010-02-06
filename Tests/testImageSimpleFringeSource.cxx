@@ -2,7 +2,8 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkImageShiftScale.h>
-#include <vtkBMPWriter.h>
+#include <vtkImageAppendComponents.h>
+#include <vtkPNGWriter.h>
 
 #include <cstdlib>
 using namespace std;
@@ -14,9 +15,20 @@ int main(int argc, char* argv[] )
    int yRes = 256;
    double phase = 0;
    int dir = 0; // vertical
-
+   int period = 16; // period of sinusoid in pixel
    if( argc < 2 )
+   {
+      cout << "usage: " << argv[0] 
+                        << " output_file_name.jpg"
+                        << " [ x_resolution{def-256}"
+                        << " y_resolution{def-256}"
+                        << " phase{0-cosine, pi/2-sine, def-0}"
+                        << " direction{0-vertical, 1-horizontal, def-0}"
+                        << " period{in pixel, def-16} ]"
+                        << endl;
+                        
       exit( 0 );
+    }
 
    if( argc == 3)
    {
@@ -36,6 +48,10 @@ int main(int argc, char* argv[] )
       {
          dir = atoi( argv[5] );
       }
+       if( argc > 6 )
+      {
+         period = atoi( argv[6] );
+      }
    }         
 
    cout << "Using parameters: " <<endl;
@@ -44,6 +60,7 @@ int main(int argc, char* argv[] )
    cout << "\t yRes: " << yRes << endl;
    cout << "\t phase: " << phase << endl;
    cout << "\t direction: " << (dir==0?"Vertical":"Horizontal") << endl;
+   cout << "\t period: " << period << endl;
 
    vtkSmartPointer<vtkImageSimpleFringeSource> source = vtkSmartPointer<vtkImageSimpleFringeSource>::New( );
 
@@ -54,6 +71,7 @@ int main(int argc, char* argv[] )
       source->SetHorizontal( );
    source->SetPhase( phase );
    source->SetAmplitude( 127 );
+   source->SetPeriod( period );
    source->Update( );
 
    vtkSmartPointer<vtkImageShiftScale> shift = vtkSmartPointer<vtkImageShiftScale>::New( );
@@ -61,8 +79,20 @@ int main(int argc, char* argv[] )
    shift->SetShift( 127 );
    shift->SetOutputScalarTypeToUnsignedChar( );
    
-   vtkSmartPointer<vtkBMPWriter> writer = vtkSmartPointer<vtkBMPWriter>::New( );
-   writer->SetInputConnection( shift->GetOutputPort( ) );
+   vtkSmartPointer<vtkImageAppendComponents> append1 = vtkSmartPointer<vtkImageAppendComponents>::New( );
+   append1->SetInputConnection( 0, shift->GetOutputPort( ));
+   append1->AddInputConnection( 0, shift->GetOutputPort( ));
+
+   vtkSmartPointer<vtkImageAppendComponents> append2 = vtkSmartPointer<vtkImageAppendComponents>::New( );
+   append2->SetInputConnection( 0, shift->GetOutputPort( ));
+   append2->AddInputConnection( 0, shift->GetOutputPort( ));
+
+   vtkSmartPointer<vtkImageAppendComponents> append3 = vtkSmartPointer<vtkImageAppendComponents>::New( );
+   append3->SetInputConnection( 0, append1->GetOutputPort( ));
+   append3->AddInputConnection( 0, append2->GetOutputPort( ));
+
+   vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New( );
+   writer->SetInputConnection( append3->GetOutputPort( ) );
    writer->SetFileName( argv[1] );
    writer->Write( );
 }
