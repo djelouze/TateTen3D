@@ -8,6 +8,10 @@ vtkStandardNewMacro(vtkImageSimpleFringeSource);
 //----------------------------------------------------------------------------
 vtkImageSimpleFringeSource::vtkImageSimpleFringeSource()
 {
+   this->SetResolution( 256, 256 );
+   this->SetVertical( );
+   this->SetPeriod( 256 );
+
 }
 
 
