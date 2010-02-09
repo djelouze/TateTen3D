@@ -1,2 +1,5 @@
 ADD_EXECUTABLE( testImageSimpleFringeSource testImageSimpleFringeSource.cxx )
 TARGET_LINK_LIBRARIES( testImageSimpleFringeSource TateTen3DAlgo vtkRendering )
+
+ADD_EXECUTABLE( testImageThreeStepPhaseShifting testImageThreeStepPhaseShifting.cxx )
+TARGET_LINK_LIBRARIES( testImageThreeStepPhaseShifting TateTen3DAlgo vtkRendering )
