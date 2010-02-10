@@ -50,7 +50,7 @@ int vtkImageThreeStepPhaseShifting::RequestInformation (
 // This templated function executes the filter for any type of data.
 // Handles the two input operations
 template <class T>
-void vtkImageThreeStepPhaseShiftingExecute2(vtkImageThreeStepPhaseShifting *self,
+void vtkImageThreeStepPhaseShiftingExecute(vtkImageThreeStepPhaseShifting *self,
                                  vtkImageData *in1Data, T *in1Ptr,
                                  vtkImageData *in2Data, T *in2Ptr,
                                  vtkImageData *in3Data, T *in3Ptr,
@@ -103,7 +103,7 @@ void vtkImageThreeStepPhaseShiftingExecute2(vtkImageThreeStepPhaseShifting *self
         // Compute the phase
         double phase;
         if( I1 == I3 && I2 == I3 )
-           phase = vtkMath::DoublePi();
+           phase = vtkMath::DoublePi()/2;
         else
            phase = atan( (sqrt(3.)*(I1 - I3))/(2.*I2 - I1 -I3 ) );
         *outPtr = phase;
@@ -112,16 +112,7 @@ void vtkImageThreeStepPhaseShiftingExecute2(vtkImageThreeStepPhaseShifting *self
         double texture = (I1+I2+I3 + sqrt(3.*pow(I1-I3,2)+pow(2.*I2-I1-I3,2)))/3.;
         *outPtr = texture;
         outPtr++;
-        if( 0 )
-           {
-           cout << idxY << ";"
-             << idxR << ";"
-             << static_cast<double>(I1) << ";"
-             << static_cast<double>(I2) << ";"
-             << static_cast<double>(I3) << ";"
-             << phase << ";"
-             << texture << endl;
-           }
+        
         in1Ptr++;
         in2Ptr++;
         in3Ptr++;
@@ -167,7 +158,7 @@ void vtkImageThreeStepPhaseShifting::ThreadedRequestData(
   switch (inData[0][0]->GetScalarType())
     {
     vtkTemplateMacro(
-      vtkImageThreeStepPhaseShiftingExecute2(this,inData[0][0],
+      vtkImageThreeStepPhaseShiftingExecute(this,inData[0][0],
                                   static_cast<VTK_TT *>(inPtr1),
                                   inData[1][0],
                                   static_cast<VTK_TT *>(inPtr2),
