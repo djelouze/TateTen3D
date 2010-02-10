@@ -54,7 +54,7 @@ void vtkImageThreeStepPhaseShiftingExecute2(vtkImageThreeStepPhaseShifting *self
                                  vtkImageData *in1Data, T *in1Ptr,
                                  vtkImageData *in2Data, T *in2Ptr,
                                  vtkImageData *in3Data, T *in3Ptr,
-                                 vtkImageData *outData, T *outPtr,
+                                 vtkImageData *outData, double *outPtr,
                                  int outExt[6], int id)
 {
   int idxR, idxY, idxZ;
@@ -105,14 +105,15 @@ void vtkImageThreeStepPhaseShiftingExecute2(vtkImageThreeStepPhaseShifting *self
         if( I1 == I3 && I2 == I3 )
            phase = vtkMath::DoublePi();
         else
-           phase = atan( (sqrt(3)*(I1 - I3))/(2*I2 - I1 -I3 ) );
+           phase = atan( (sqrt(3.)*(I1 - I3))/(2.*I2 - I1 -I3 ) );
         *outPtr = phase;
         outPtr++;
         // Compute the texture
-        double texture = (I1+I2+I3 + sqrt(3*pow(I1-I3,2)+pow(2*I2-I1-I3,2)))/3;
+        double texture = (I1+I2+I3 + sqrt(3.*pow(I1-I3,2)+pow(2.*I2-I1-I3,2)))/3.;
         *outPtr = texture;
         outPtr++;
-        if( texture > 1000 || texture < -1000 )
+        if( 0 )
+           {
            cout << idxY << ";"
              << idxR << ";"
              << static_cast<double>(I1) << ";"
@@ -120,7 +121,7 @@ void vtkImageThreeStepPhaseShiftingExecute2(vtkImageThreeStepPhaseShifting *self
              << static_cast<double>(I3) << ";"
              << phase << ";"
              << texture << endl;
-
+           }
         in1Ptr++;
         in2Ptr++;
         in3Ptr++;
@@ -156,6 +157,7 @@ void vtkImageThreeStepPhaseShifting::ThreadedRequestData(
   void *inPtr3;
   void *outPtr;
 
+
   inPtr1 = inData[0][0]->GetScalarPointerForExtent(outExt);
   inPtr2 = inData[1][0]->GetScalarPointerForExtent(outExt);
   inPtr3 = inData[2][0]->GetScalarPointerForExtent(outExt);
@@ -172,7 +174,7 @@ void vtkImageThreeStepPhaseShifting::ThreadedRequestData(
                                   inData[2][0],
                                   static_cast<VTK_TT *>(inPtr3),
                                   outData[0],
-                                  static_cast<VTK_TT *>(outPtr), outExt,
+                                  static_cast<double*>(outPtr), outExt,
                                   id));
     default:
       vtkErrorMacro(<< "Execute: Unknown ScalarType");
