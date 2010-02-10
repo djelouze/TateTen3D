@@ -40,7 +40,6 @@ int main(int argc, char* argv[] )
 
       source2->SetPhase( 0 );
       source2->SetAmplitude( 127 );
-      source2->SetPeriod( 16 );
       source2->Update( );
 
       source3->SetPhase( 2 * Pi / 3. );
