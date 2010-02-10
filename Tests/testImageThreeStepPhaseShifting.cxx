@@ -9,7 +9,7 @@
 #include <vtkImageMagnitude.h>
 #include <vtkMetaImageWriter.h>
 #include <vtkPNGWriter.h>
-#include <vtkJPEGReader.h>
+#include <vtkPNGReader.h>
 
 #include <cstdlib>
 using namespace std;
@@ -58,9 +58,9 @@ int main(int argc, char* argv[] )
       }
    else
       {
-      vtkSmartPointer<vtkJPEGReader> source1 = vtkSmartPointer<vtkJPEGReader>::New( );
-      vtkSmartPointer<vtkJPEGReader> source2 = vtkSmartPointer<vtkJPEGReader>::New( );
-      vtkSmartPointer<vtkJPEGReader> source3 = vtkSmartPointer<vtkJPEGReader>::New( );
+      vtkSmartPointer<vtkPNGReader> source1 = vtkSmartPointer<vtkPNGReader>::New( );
+      vtkSmartPointer<vtkPNGReader> source2 = vtkSmartPointer<vtkPNGReader>::New( );
+      vtkSmartPointer<vtkPNGReader> source3 = vtkSmartPointer<vtkPNGReader>::New( );
 
       source1->SetFileName( argv[2] );
       source2->SetFileName( argv[3] );
