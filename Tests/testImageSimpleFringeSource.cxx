@@ -11,88 +11,27 @@ using namespace std;
 int main(int argc, char* argv[] )
 {
    
-   int xRes = 256;
-   int yRes = 256;
-   double phase = 0;
-   int dir = 0; // vertical
-   int period = 16; // period of sinusoid in pixel
-   if( argc < 2 )
-   {
-      cout << "usage: " << argv[0] 
-                        << " output_file_name.jpg"
-                        << " [ x_resolution{def-256}"
-                        << " y_resolution{def-256}"
-                        << " phase{0-cosine, pi/2-sine, def-0}"
-                        << " direction{0-vertical, 1-horizontal, def-0}"
-                        << " period{in pixel, def-16} ]"
-                        << endl;
-                        
-      exit( 0 );
-    }
 
-   if( argc == 3)
-   {
-      xRes = atoi( argv[2] );
-      yRes = atoi( argv[2] );
-   }
-   else if( argc > 3 )
-   {
-      xRes = atoi( argv[2] );
-      yRes = atoi( argv[3] );
-     
-      if( argc > 4 )
-      {
-         phase = atof( argv[4] );
-      }
-      if( argc > 5 )
-      {
-         dir = atoi( argv[5] );
-      }
-       if( argc > 6 )
-      {
-         period = atoi( argv[6] );
-      }
-   }         
+   vtkSmartPointer<vtkImageSimpleFringeSource> source;
+   source = vtkSmartPointer<vtkImageSimpleFringeSource>::New( );
 
-   cout << "Using parameters: " <<endl;
-   cout << "\t Output file name: " << argv[1] << endl;
-   cout << "\t xRes: " << xRes << endl;
-   cout << "\t yRes: " << yRes << endl;
-   cout << "\t phase: " << phase << endl;
-   cout << "\t direction: " << (dir==0?"Vertical":"Horizontal") << endl;
-   cout << "\t period: " << period << endl;
-
-   vtkSmartPointer<vtkImageSimpleFringeSource> source = vtkSmartPointer<vtkImageSimpleFringeSource>::New( );
-
-   source->SetResolution( xRes, yRes );
-   if( !dir )
-      source->SetVertical( );
-   else
-      source->SetHorizontal( );
-   source->SetPhase( phase );
+   source->SetResolution( 256, 256 );
+   source->SetVertical( );
+   source->SetPhase( 0 );
    source->SetAmplitude( 127 );
-   source->SetPeriod( period );
-   source->Update( );
+   source->SetPeriod( 32 );
 
-   vtkSmartPointer<vtkImageShiftScale> shift = vtkSmartPointer<vtkImageShiftScale>::New( );
+   // output range is [-127/2,127/2], but It has to be unsigned.
+   //! \todo Add a 'SetMean' in vtkImageSimpleFringeSource
+   vtkSmartPointer<vtkImageShiftScale> shift;
+   shift = vtkSmartPointer<vtkImageShiftScale>::New( );
    shift->SetInputConnection( source->GetOutputPort( ) );
    shift->SetShift( 127 );
    shift->SetOutputScalarTypeToUnsignedChar( );
    
-   vtkSmartPointer<vtkImageAppendComponents> append1 = vtkSmartPointer<vtkImageAppendComponents>::New( );
-   append1->SetInputConnection( 0, shift->GetOutputPort( ));
-   append1->AddInputConnection( 0, shift->GetOutputPort( ));
-
-   vtkSmartPointer<vtkImageAppendComponents> append2 = vtkSmartPointer<vtkImageAppendComponents>::New( );
-   append2->SetInputConnection( 0, shift->GetOutputPort( ));
-   append2->AddInputConnection( 0, shift->GetOutputPort( ));
-
-   vtkSmartPointer<vtkImageAppendComponents> append3 = vtkSmartPointer<vtkImageAppendComponents>::New( );
-   append3->SetInputConnection( 0, append1->GetOutputPort( ));
-   append3->AddInputConnection( 0, append2->GetOutputPort( ));
-
-   vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New( );
-   writer->SetInputConnection( append3->GetOutputPort( ) );
-   writer->SetFileName( argv[1] );
+   vtkSmartPointer<vtkPNGWriter> writer;
+   writer = vtkSmartPointer<vtkPNGWriter>::New( );
+   writer->SetInputConnection( shift->GetOutputPort( ) );
+   writer->SetFileName( "testImageSimpleFringeSource-output.png" );
    writer->Write( );
 }
