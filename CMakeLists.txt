@@ -37,14 +37,29 @@ ENDIF (USE_VTK_FILE)
 
 SUBDIRS(
    Algorithms
-   Tests
 )
 
 OPTION( BUILD_DOCUMENTATION 
         "Build Doxygen documentation"
         OFF )
 
+OPTION( BUILD_TESTS 
+        "Build tests"
+        OFF )
+
+OPTION( BUILD_TOOLS 
+        "Build Tools"
+        ON )
+
 IF( BUILD_DOCUMENTATION )
    SUBDIRS(Documentation)
 ENDIF( BUILD_DOCUMENTATION )
+
+IF( BUILD_TESTS )
+   SUBDIRS(Tests)
+ENDIF( BUILD_TESTS )
+
+IF( BUILD_TOOLS )
+   SUBDIRS(Tools)
+ENDIF( BUILD_TOOLS )
 
