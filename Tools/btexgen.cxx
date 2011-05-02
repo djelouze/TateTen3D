@@ -79,20 +79,14 @@ int main(int argc, char* argv[] )
    shift->SetShift( 127 );
    shift->SetOutputScalarTypeToUnsignedChar( );
    
-   vtkSmartPointer<vtkImageAppendComponents> append1 = vtkSmartPointer<vtkImageAppendComponents>::New( );
-   append1->SetInputConnection( 0, shift->GetOutputPort( ));
-   append1->AddInputConnection( 0, shift->GetOutputPort( ));
-
-   vtkSmartPointer<vtkImageAppendComponents> append2 = vtkSmartPointer<vtkImageAppendComponents>::New( );
-   append2->SetInputConnection( 0, shift->GetOutputPort( ));
-   append2->AddInputConnection( 0, shift->GetOutputPort( ));
-
-   vtkSmartPointer<vtkImageAppendComponents> append3 = vtkSmartPointer<vtkImageAppendComponents>::New( );
-   append3->SetInputConnection( 0, append1->GetOutputPort( ));
-   append3->AddInputConnection( 0, append2->GetOutputPort( ));
+   vtkSmartPointer<vtkImageAppendComponents> append = vtkSmartPointer<vtkImageAppendComponents>::New( );
+   append->AddInputConnection( 0, shift->GetOutputPort( )); // R
+   append->AddInputConnection( 0, shift->GetOutputPort( )); // G
+   append->AddInputConnection( 0, shift->GetOutputPort( )); // B
+   append->AddInputConnection( 0, shift->GetOutputPort( )); // A
 
    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New( );
-   writer->SetInputConnection( append3->GetOutputPort( ) );
+   writer->SetInputConnection( append->GetOutputPort( ) );
    writer->SetFileName( argv[1] );
    writer->Write( );
 }
