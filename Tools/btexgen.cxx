@@ -5,8 +5,7 @@
 #include <vtkImageAppendComponents.h>
 #include <vtkPNGWriter.h>
 
-#include <cstdlib>
-using namespace std;
+#include <sstream>
 
 int main(int argc, char* argv[] )
 {
@@ -32,25 +31,31 @@ int main(int argc, char* argv[] )
 
    if( argc == 3)
    {
-      xRes = atoi( argv[2] );
-      yRes = atoi( argv[2] );
+      std::istringstream resStream(argv[2]);
+      resStream >> xRes;
+      resStream >> yRes;
    }
    else if( argc > 3 )
    {
-      xRes = atoi( argv[2] );
-      yRes = atoi( argv[3] );
+      std::istringstream resXStream(argv[2]);
+      resXStream >> xRes;
+      std::istringstream resYStream(argv[3]);
+      resYStream >> yRes;
      
       if( argc > 4 )
       {
-         phase = atof( argv[4] );
+	std::istringstream phaseStream( argv[4] );
+	phaseStream >> phase;
       }
       if( argc > 5 )
       {
-         dir = atoi( argv[5] );
+	std::istringstream dirStream( argv[5] );
+	dirStream >> dir;
       }
        if( argc > 6 )
       {
-         period = atoi( argv[6] );
+	std::istringstream periodStream( argv[6] );
+        periodStream >> period;
       }
    }         
 
